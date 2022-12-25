@@ -26,3 +26,4 @@ locals {
   }
 }
 
+data "aws_region" "current" {} # gives a resource to use current region
