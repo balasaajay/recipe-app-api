@@ -18,5 +18,11 @@ provider "aws" {
 
 locals {
   prefix = "${var.prefix}-${terraform.workspace}" # Interpolation syntax
+  common_tags = {
+    Environment = terraform.workspace
+    Project     = var.project
+    owner       = var.contact
+    ManagedBy   = "Terraform"
+  }
 }
 
