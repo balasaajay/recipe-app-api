@@ -11,3 +11,7 @@ variable "project" {
 variable "contact" {
   default = "ajay.gradapplicant@gmail.com"
 }
+
+variable "instance_type" {
+  default = "t2.micro"
+}
