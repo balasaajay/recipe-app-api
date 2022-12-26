@@ -15,3 +15,11 @@ variable "contact" {
 variable "instance_type" {
   default = "t2.micro"
 }
+
+variable "db_username" {
+  description = "Username for the RDS postgres instance"
+}
+
+variable "db_password" {
+  description = "Password for the RDS postgres instance"
+}
