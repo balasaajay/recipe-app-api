@@ -27,3 +27,17 @@ variable "db_password" {
 variable "bastion_key_name" {
   default = "recipe-app-api-bastion"
 }
+
+variable "ecr_image_api" {
+  description = "ECR Image for API"
+  default     = "831876455483.dkr.ecr.us-east-1.amazonaws.com/recipe-app-api:latest"
+}
+
+variable "ecr_image_proxy" {
+  description = "ECR Image for Proxy"
+  default     = "831876455483.dkr.ecr.us-east-1.amazonaws.com/recipe-app-api-proxy:dev"
+}
+
+variable "django_secret_key" {
+  description = "Secret Key for Django app"
+}
