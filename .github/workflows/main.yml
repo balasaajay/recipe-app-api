@@ -45,7 +45,7 @@ jobs:
           pip3 install awscli==1.18.8
           docker load --input image.tar
           $(aws ecr get-login --no-include-email --region us-east-1)
-          docker tag recipe_app_api:latest $ECR_REPO:dev
+          docker tag recipe_app_api:latest $ECR_REPO:latest
           docker push $ECR_REPO:latest
         if: startsWith(env.GITHUB_REF_NAME,'release') != true
 
