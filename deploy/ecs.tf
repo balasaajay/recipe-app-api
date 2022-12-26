@@ -51,7 +51,7 @@ data "template_file" "api_container_definitions" {
     db_pass           = aws_db_instance.main.password
     log_group_name    = aws_cloudwatch_log_group.ecs_task_logs.name
     log_group_region  = data.aws_region.current.name
-    allowed_hosts     = "*"
+    allowed_hosts     = aws_lb.api.dns_name
   }
 }
 
@@ -95,10 +95,12 @@ resource "aws_security_group" "ecs_service" {
   }
 
   ingress {
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 8000
+    to_port   = 8000
+    protocol  = "tcp"
+    security_groups = [
+      aws_security_group.lb.id
+    ]
   }
 
   tags = local.common_tags
@@ -109,16 +111,21 @@ resource "aws_ecs_service" "api" {
   name             = "${local.prefix}-api"
   cluster          = aws_ecs_cluster.main.name
   task_definition  = aws_ecs_task_definition.api.family
-  desired_count    = 2
+  desired_count    = 1
   platform_version = "1.4.0"
   launch_type      = "FARGATE"
 
   network_configuration {
     subnets = [
-      aws_subnet.public_a.id,
-      aws_subnet.public_b.id
+      aws_subnet.private_a.id,
+      aws_subnet.private_b.id
     ]
-    security_groups  = [aws_security_group.ecs_service.id]
-    assign_public_ip = true
+    security_groups = [aws_security_group.ecs_service.id]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.api.arn
+    container_name   = "proxy"
+    container_port   = 8000
   }
 }
