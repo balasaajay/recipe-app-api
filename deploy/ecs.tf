@@ -48,7 +48,7 @@ data "template_file" "api_container_definitions" {
     db_host           = aws_db_instance.main.address
     db_name           = aws_db_instance.main.name
     db_user           = aws_db_instance.main.username
-    db_password       = aws_db_instance.main.password
+    db_pass           = aws_db_instance.main.password
     log_group_name    = aws_cloudwatch_log_group.ecs_task_logs.name
     log_group_region  = data.aws_region.current.name
     allowed_hosts     = "*"
@@ -106,11 +106,12 @@ resource "aws_security_group" "ecs_service" {
 }
 
 resource "aws_ecs_service" "api" {
-  name            = "${local.prefix}-api"
-  cluster         = aws_ecs_cluster.main.name
-  task_definition = aws_ecs_task_definition.api.family
-  desired_count   = 2
-  launch_type     = "FARGATE"
+  name             = "${local.prefix}-api"
+  cluster          = aws_ecs_cluster.main.name
+  task_definition  = aws_ecs_task_definition.api.family
+  desired_count    = 2
+  platform_version = "1.4.0"
+  launch_type      = "FARGATE"
 
   network_configuration {
     subnets = [
