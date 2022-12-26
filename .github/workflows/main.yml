@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'release/*'
+      - 'feature/*'
+
+env:
+  ECR_REPO: 831876455483.dkr.ecr.us-east-1.amazonaws.com/recipe-app-api-proxy
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: docker:20.10.21
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          mkdir -p data/
+          docker build --compress -t recipe_app_api:latest .
+          docker save --output data/image.tar recipe_app_api:latest
+      - name: Stash files
+        # Stash files for using later in the workflow
+        uses: actions/upload-artifact@v3
+        with:
+          name: image
+          path: data/*.tar
+
+  push_dev:
+    needs: [build]
+    runs-on: ubuntu-latest
+    container: 
+      image: docker:20.10.21
+    steps:
+      - name: Download tar
+        uses: actions/download-artifact@v3
+        with:
+          name: image
+      - name: Push image to ECR
+        run: |
+          apk add python3 py3-pip
+          pip3 install awscli==1.18.8
+          docker load --input image.tar
+          $(aws ecr get-login --no-include-email --region us-east-1)
+          docker tag recipe_app_api:latest $ECR_REPO:dev
+          docker push $ECR_REPO:latest
+        if: startsWith(env.GITHUB_REF_NAME,'release') != true
+
+  push_release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    container: 
+      image: docker:20.10.21
+    steps:
+      - name: Download tar
+        uses: actions/download-artifact@v3
+        with:
+          name: image
+      - name: Push image to ECR
+        run: | 
+          apk add python3 py3-pip
+          pip3 install awscli==1.18.8
+          docker load --input image.tar
+          $(aws ecr get-login --no-include-email --region us-east-1)
+          export TAGGED_ECR_REPO=$ECR_REPO:$(echo $GITHUB_REF_NAME | awk '{print $2}')
+          docker tag recipe_app_api:latest $TAGGED_ECR_REPO
+          docker push $TAGGED_ECR_REPO
+          docker tag $TAGGED_ECR_REPO $ECR_REPO:latest
+          docker push $ECR_REPO:latest
+        if: startsWith(env.GITHUB_REF_NAME,'release') == true
+      
