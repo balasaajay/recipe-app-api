@@ -41,3 +41,18 @@ variable "ecr_image_proxy" {
 variable "django_secret_key" {
   description = "Secret Key for Django app"
 }
+
+variable "dns_zone_name" {
+  description = "Domain Name"
+  default     = "recipe-app-aj.link"
+}
+
+variable "sub_domain" {
+  description = "Subdomain per env"
+  type        = map(string)
+  default = {
+    production = "api"
+    staging    = "api.staging"
+    dev        = "api.dev"
+  }
+}
