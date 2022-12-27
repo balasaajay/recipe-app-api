@@ -1,13 +1,13 @@
-# Recipe App API DevOps Starting Point
+# Recipe App API
 
-Source code for my Udemy course Build a [Backend REST API with Python & Django - Advanced](http://udemy.com/django-python-advanced/).
+Deploy Infrastructure for hosting django Recipe app API using Terraform on AWS
 
-The course teaches how to build a fully functioning REST API using:
+## AWS Services deployed
+EC2, S3, ACM, Route 53, Load Balancer, VPC, subnets, NAT gateway, Internet gateway, Route tables, RDS, ECS, Dynamo DB
 
- - Python
- - Django / Django-REST-Framework
- - Docker / Docker-Compose
- - Test Driven Development
+## AWS Infra architecture
+Infra deployed using Terraform
+![Alt text](./deploy/aws_recipe_app_arch.png?raw=true "AWS Arch")
 
 ## Getting started
 
