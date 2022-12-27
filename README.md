@@ -7,7 +7,7 @@ EC2, S3, ACM, Route 53, Load Balancer, VPC, subnets, NAT gateway, Internet gatew
 
 ## AWS Infra architecture
 Infra deployed using Terraform
-![Alt text](./deploy/aws_recipe_app_arch.png?raw=true "AWS Arch")
+![alt text](./deploy/aws_recipe_app_arch.png?raw=true "AWS Arch")
 
 ## Getting started
 
